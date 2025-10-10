@@ -1,0 +1,39 @@
+# IMPORTANT NOTE:
+#
+# the first digit in 4 digits modes specify setuid, setgid and sticky bit:
+#
+#    .----------------- setuid
+#    |.---------------- setgid
+#    ||.--------------- sticky bit
+#    |||  .------------ owner read
+#    |||  |.----------- owner write
+#    |||  ||.---------- owner execute/search
+#    |||  ||| .-------- group read
+#    |||  ||| |.------- group write
+#    |||  ||| ||.------ group execute/search
+#    |||  ||| ||| .---- other read
+#    |||  ||| ||| |.--- other write
+#    |||  ||| ||| ||.-- other execute/search
+#    |||  ||| ||| |||
+#   (...) ... ... ...
+#   (421) 421 421 421
+
+alvise:
+  alvise:
+    640:
+      "testdir/source1/inner1/c.txt": "testdir/dest1/f.txt"
+      "testdir/source1/inner2/d.txt": "testdir/dest1/inner/g.txt"
+1000:
+  1000:
+    2600:
+      "testdir/source1/e.txt": "testdir/dest2/h.txt"
+  wlanUD:
+    644:
+      "testdir/source2/a.txt": "testdir/dest2/inner/i.txt"
+      "testdir/source2/./a.txt": "testdir/dest2/inner/non-existent/i.txt"
+    666:
+      "testdir/source2/b.txt": "testdir/dest2/inner/j.txt"
+0:
+  0:
+    666:
+      "testdir/source2/b.txt": "testdir/dest2/inner/k.txt"
