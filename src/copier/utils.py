@@ -71,15 +71,17 @@ def copy_and_own(src: str, dst: str, uid: int, gid: int, mode: int):
 
 
 def copytree(src: str, dst: str, uid: int, gid: int, mode: int):
-    for item in os.listdir(src):
-        source = os.path.join(src, item)
-        dest = os.path.join(dst, item)
-        if os.path.isdir(source):
-            copytree(source, dest, uid, gid, mode)
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+    for dir, dirs, files in os.walk(dst):
+        for name in dirs:
+            dest = os.path.join(dir, name)
             os.chown(dest, uid, gid)
             os.chmod(
                 dest,
                 (mode >> 12 if mode >= 1 << 12 else ((mode & 0o7777) | 0o111)),
             )
-        else:
-            copy_and_own(source, dest, uid, gid, mode)
+
+        for name in files:
+            dest = os.path.join(dir, name)
+            os.chown(dest, uid, gid)
+            os.chmod(dest, mode & 0o7777)
