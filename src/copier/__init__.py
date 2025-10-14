@@ -1,4 +1,3 @@
-import shutil
 import os
 from typing import cast
 import yaml
@@ -24,9 +23,10 @@ def sub_in(item: Item):
         uid = ensure_uid(args.owner)
         gid = ensure_gid(args.group)
         mode = convert_mode(args.mode)
-        shutil.copy(item.dst, item.src)
-        os.chown(item.src, uid, gid)
-        os.chmod(item.src, mode)
+        if os.path.isdir(item.dst):
+            copytree(item.dst, item.src, uid, gid, mode)
+        else:
+            copy_and_own(item.dst, item.src, uid, gid, mode)
     except Exception as ex:
         print(ex)
 
@@ -34,9 +34,10 @@ def sub_in(item: Item):
 def sub_out(item: Item):
     try:
         print(f'{item.octal} {item.owner}:{item.group} "{item.src}"->"{item.dst}"')
-        shutil.copy(item.src, item.dst)
-        os.chown(item.dst, item.uid, item.gid)
-        os.chmod(item.dst, item.mode)
+        if os.path.isdir(item.src):
+            copytree(item.src, item.dst, item.uid, item.gid, item.mode)
+        else:
+            copy_and_own(item.src, item.dst, item.uid, item.gid, item.mode)
     except Exception as ex:
         print(ex)
 

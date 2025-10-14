@@ -1,6 +1,6 @@
-# IMPORTANT NOTE:
+# REMINDER:
 #
-# the first digit in 4 digits modes specify setuid, setgid and sticky bit:
+# The first digit in 4 digits modes specify setuid, setgid and sticky bit:
 #
 #    .----------------- setuid
 #    |.---------------- setgid
@@ -17,6 +17,18 @@
 #    |||  ||| ||| |||
 #   (...) ... ... ...
 #   (421) 421 421 421
+#
+#
+# If a copy point is a folder, an additional set of permissions can be provided,
+# the msb permissions will be used on directories.
+# the fourth digit is now required for the lsb permissions.
+# if missing, lsb+x permissions will be used:
+#   (...) ... ... ...  ... ... ... ...
+#   (421) 421 421 421  421 421 421 421
+# 
+# ---- WARNING! ----
+# DO NOT include leading zeroes in numerical inputs
+# On yaml, that is notation for an octal value
 
 alvise:
   alvise:
@@ -33,6 +45,8 @@ alvise:
       "testdir/source2/./a.txt": "testdir/dest2/inner/non-existent/i.txt"
     666:
       "testdir/source2/b.txt": "testdir/dest2/inner/j.txt"
+    7440600:
+      "testdir/source3": "testdir/dest3"
 0:
   0:
     666:

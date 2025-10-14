@@ -9,7 +9,6 @@ dependencies = [
     "pyyaml>=6.0.3",
 ]
 
-
 classifiers = ["Private :: Do Not Upload"]
 authors = [
     { name = "Alvise Bruniera", email = "alvisebruniera@gmail.com" },
