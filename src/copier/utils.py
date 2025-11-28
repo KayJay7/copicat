@@ -1,9 +1,12 @@
-from pwd import getpwnam
-from grp import getgrnam
-from typing import NamedTuple
-from collections.abc import Iterable
-import shutil
 import os
+import shutil
+from collections.abc import Iterable
+from grp import getgrnam
+from pathlib import Path
+from pwd import getpwnam
+from typing import NamedTuple, cast
+
+import filetype
 
 __all__ = [
     "ensure_uid",
@@ -13,6 +16,10 @@ __all__ = [
     "loop_files",
     "copy_and_own",
     "copytree",
+    "copy_dir_structure",
+    "copy_top_dir",
+    "convert_mode",
+    "copy_or_link_file",
 ]
 
 type Schema = dict[str | int, dict[str | int, dict[int, dict[str, str]]]]
@@ -25,8 +32,8 @@ class Item(NamedTuple):
     uid: int
     gid: int
     mode: int
-    src: str
-    dst: str
+    src: Path
+    dst: Path
 
 
 def ensure_uid(owner: str | int) -> int:
@@ -57,24 +64,33 @@ def loop_files(config: Schema) -> Iterable[Item]:
                     for octal, next in next.items():
                         for src, dst in next.items():
                             mode = convert_mode(octal)
-                            yield Item(owner, group, octal, uid, gid, mode, src, dst)
+                            yield Item(
+                                owner,
+                                group,
+                                octal,
+                                uid,
+                                gid,
+                                mode,
+                                Path(src),
+                                Path(dst),
+                            )
                 except Exception as ex:
                     print(ex)
         except Exception as ex:
             print(ex)
 
 
-def copy_and_own(src: str, dst: str, uid: int, gid: int, mode: int):
+def copy_and_own(src: Path, dst: Path, uid: int, gid: int, mode: int):
     shutil.copy(src, dst)
     os.chown(dst, uid, gid)
     os.chmod(dst, mode & 0o7777)
 
 
-def copytree(src: str, dst: str, uid: int, gid: int, mode: int):
+def copytree(src: Path, dst: Path, uid: int, gid: int, mode: int):
     shutil.copytree(src, dst, dirs_exist_ok=True)
-    for dir, dirs, files in os.walk(dst):
+    for dir, dirs, files in dst.walk():
         for name in dirs:
-            dest = os.path.join(dir, name)
+            dest = dir / name
             os.chown(dest, uid, gid)
             os.chmod(
                 dest,
@@ -82,6 +98,48 @@ def copytree(src: str, dst: str, uid: int, gid: int, mode: int):
             )
 
         for name in files:
-            dest = os.path.join(dir, name)
+            dest = dir / name
             os.chown(dest, uid, gid)
             os.chmod(dest, mode & 0o7777)
+
+
+def copy_top_dir(src: Path, dst: Path, hard_link: bool, mime: str):
+    assert src.is_dir()
+    for item in src.iterdir():
+        copy_or_link_file(item, dst / item.name, hard_link, mime)
+
+
+def copy_dir_structure(src: Path, dst: Path, hard_link: bool, mime: str):
+    assert src.is_dir()
+    base = dst / src.name
+    for dir, dirs, files in src.walk():
+        # print(f"{dir}, {files}, {dirs}")
+        inner = dir.relative_to(src)
+        for file in files:
+            copy_or_link_file(
+                dir / file, base / inner / file, hard_link, mime, parents=True
+            )
+
+
+def copy_or_link_file(
+    src: Path, dst: Path, hard_link: bool, mime: str, parents: bool = False
+):
+    try:
+        actual = cast(str, filetype.guess_mime(src))
+        if match_mime(actual, mime):
+            if parents:
+                os.makedirs(dst.parent, exist_ok=True)
+            if hard_link:
+                print(f'link: "{src}"->"{dst}"')
+                os.link(src, dst)
+            else:
+                print(f'copy: "{src}"->"{dst}"')
+                shutil.copy(src, dst)
+    except AttributeError:
+        pass
+    except Exception as ex:
+        print(ex)
+
+
+def match_mime(actual: str, mime: str):
+    return ("/" in mime and actual == mime) or actual.startswith(mime + "/")
