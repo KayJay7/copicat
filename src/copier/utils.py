@@ -7,6 +7,8 @@ from pwd import getpwnam
 from typing import NamedTuple
 import mimetypes
 
+from copier.args import args
+
 __all__ = [
     "ensure_uid",
     "ensure_gid",
@@ -145,10 +147,12 @@ def copy_or_link_file(
                 os.makedirs(dst.parent, exist_ok=True)
             if hard_link:
                 print(f'link: "{src}"->"{dst}"')
-                os.link(src, dst)
+                if not args.dry_run:
+                    os.link(src, dst)
             else:
                 print(f'copy: "{src}"->"{dst}"')
-                shutil.copy(src, dst)
+                if not args.dry_run:
+                    shutil.copy(src, dst)
     except AttributeError:
         pass
     except Exception as ex:

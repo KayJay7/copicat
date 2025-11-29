@@ -11,11 +11,13 @@ class InArgs(NamedTuple):
     owner: str | int
     group: str | int
     mode: int
+    dry_run: bool
 
 
 class OutArgs(NamedTuple):
     sub: Literal["out"]
     config: Path
+    dry_run: bool
 
 
 class TypeArgs(NamedTuple):
@@ -26,6 +28,7 @@ class TypeArgs(NamedTuple):
     hard_link: bool
     mime: str
     dry_types: bool
+    dry_run: bool
 
 
 type Args = InArgs | OutArgs | TypeArgs
@@ -111,8 +114,34 @@ _parser_type.add_argument(
 _parser_type.add_argument(
     "-T",
     "--dry-types",
-    help="Print the types of all candidate source files instead of performing the copy",
+    help="Just print the types of all candidate source files. Different implementations might identify types differently",
     action="store_true",
 )
+
+
+#### dry run on all parsers
+
+_parser_type.add_argument(
+    "-D",
+    "--dry-run",
+    help="Print the operation without performing any action",
+    action="store_true",
+)
+
+_parser_in.add_argument(
+    "-D",
+    "--dry-run",
+    help="Print the operation without performing any action",
+    action="store_true",
+)
+
+_parser_out.add_argument(
+    "-D",
+    "--dry-run",
+    help="Print the operation without performing any action",
+    action="store_true",
+)
+
+####
 
 args = cast(Args, _parser.parse_args())
