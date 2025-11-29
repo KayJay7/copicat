@@ -26,6 +26,7 @@ authors = [
 copier = "copier:main"
 
 [project.urls]
+Homepage = "https://github.com/KayJay7/copier"
 Repository = "https://github.com/KayJay7/copier.git"
 
 [build-system]

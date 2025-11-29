@@ -6,9 +6,11 @@ import yaml
 from copier.args import *
 from copier.utils import *
 
+_all_ = ["main"]
+
 
 def main():
-    print(args)
+    # print(args)
     match args.sub:
         case "in":
             iter_config(copy_in)
@@ -48,13 +50,14 @@ def copy_in(item: Item):
     assert args.sub == "in"
     try:
         print(f'copy: {args.mode} {args.owner}:{args.group} "{item.dst}"->"{item.src}"')
-        uid = ensure_uid(args.owner)
-        gid = ensure_gid(args.group)
-        mode = convert_mode(args.mode)
-        if item.dst.is_dir():
-            copytree(item.dst, item.src, uid, gid, mode)
-        else:
-            copy_and_own(item.dst, item.src, uid, gid, mode)
+        if not args.dry_run:
+            uid = ensure_uid(args.owner)
+            gid = ensure_gid(args.group)
+            mode = convert_mode(args.mode)
+            if item.dst.is_dir():
+                copytree(item.dst, item.src, uid, gid, mode)
+            else:
+                copy_and_own(item.dst, item.src, uid, gid, mode)
     except Exception as ex:
         print(ex)
 
@@ -64,10 +67,11 @@ def copy_out(item: Item):
         print(
             f'copy: {item.octal} {item.owner}:{item.group} "{item.src}"->"{item.dst}"'
         )
-        if item.src.is_dir():
-            copytree(item.src, item.dst, item.uid, item.gid, item.mode)
-        else:
-            copy_and_own(item.src, item.dst, item.uid, item.gid, item.mode)
+        if not args.dry_run:
+            if item.src.is_dir():
+                copytree(item.src, item.dst, item.uid, item.gid, item.mode)
+            else:
+                copy_and_own(item.src, item.dst, item.uid, item.gid, item.mode)
     except Exception as ex:
         print(ex)
 
