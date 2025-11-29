@@ -1,6 +1,6 @@
 [project]
 name = "copier"
-version = "1.0.0"
+version = "1.1.0"
 description = "Programmatically copy file to and from configured locations"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -19,7 +19,6 @@ classifiers = [
 ]
 authors = [
     { name = "Alvise Bruniera", email = "alvisebruniera@gmail.com" },
-    { name = "Lucide", email = "33134209+Lucide@users.noreply.github.com" },
 ]
 
 [project.scripts]
