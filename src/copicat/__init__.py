@@ -11,6 +11,7 @@ _all_ = ["main"]
 
 def main():
     # print(args)
+    # exit()
     match args.sub:
         case "in":
             iter_config(copy_in)
@@ -25,16 +26,31 @@ def type_sub():
     if args.source.is_file():
         dst = args.dest / args.source.name
         copy_or_link_file(
-            args.source, dst, args.hard_link, args.mime, dry_types=args.dry_types
+            args.source,
+            dst,
+            args.hard_link,
+            args.mimes,
+            args.extensions,
+            dry_types=args.dry_types,
         )
     elif args.source.is_dir() and args.dest.is_dir():
         if args.keep_structure:
             copy_dir_structure(
-                args.source, args.dest, args.hard_link, args.mime, args.dry_types
+                args.source,
+                args.dest,
+                args.hard_link,
+                args.mimes,
+                args.extensions,
+                args.dry_types,
             )
         else:
             copy_top_dir(
-                args.source, args.dest, args.hard_link, args.mime, args.dry_types
+                args.source,
+                args.dest,
+                args.hard_link,
+                args.mimes,
+                args.extensions,
+                args.dry_types,
             )
 
 

@@ -1,3 +1,4 @@
+from itertools import chain
 import os
 import shutil
 from collections.abc import Iterable
@@ -105,14 +106,28 @@ def copytree(src: Path, dst: Path, uid: int, gid: int, mode: int):
             os.chmod(dest, mode & 0o7777)
 
 
-def copy_top_dir(src: Path, dst: Path, hard_link: bool, mime: str, dry_types: bool):
+def copy_top_dir(
+    src: Path,
+    dst: Path,
+    hard_link: bool,
+    mime: list[str],
+    extension: list[str],
+    dry_types: bool,
+):
     assert src.is_dir()
     for item in src.iterdir():
-        copy_or_link_file(item, dst / item.name, hard_link, mime, dry_types=dry_types)
+        copy_or_link_file(
+            item, dst / item.name, hard_link, mime, extension, dry_types=dry_types
+        )
 
 
 def copy_dir_structure(
-    src: Path, dst: Path, hard_link: bool, mime: str, dry_types: bool
+    src: Path,
+    dst: Path,
+    hard_link: bool,
+    mimes: list[str],
+    extensions: list[str],
+    dry_types: bool,
 ):
     assert src.is_dir()
     base = dst / src.name
@@ -124,7 +139,8 @@ def copy_dir_structure(
                 dir / file,
                 base / inner / file,
                 hard_link,
-                mime,
+                mimes,
+                extensions,
                 dry_types=dry_types,
                 parents=True,
             )
@@ -134,7 +150,8 @@ def copy_or_link_file(
     src: Path,
     dst: Path,
     hard_link: bool,
-    mime: str,
+    mimes: list[str],
+    extensions: list[str],
     dry_types: bool = False,
     parents: bool = False,
 ):
@@ -142,7 +159,7 @@ def copy_or_link_file(
         actual = better_guess(src)
         if dry_types:
             print(f'"{src}": {actual}')
-        elif match_mime(actual, mime):
+        elif match_file(actual, src.suffix, mimes, extensions):
             if parents:
                 os.makedirs(dst.parent, exist_ok=True)
             if hard_link:
@@ -157,8 +174,19 @@ def copy_or_link_file(
         print(ex)
 
 
-def match_mime(actual: str, mime: str):
-    return ("/" in mime and actual == mime) or actual.startswith(mime + "/")
+def match_file(
+    actual_mime: str, actual_extension: str, mimes: list[str], extensions: list[str]
+):
+    return any(
+        chain(
+            (
+                ("/" in mime and actual_mime == mime)
+                or actual_mime.startswith(mime + "/")
+                for mime in mimes
+            ),
+            (actual_extension == extension for extension in extensions),
+        )
+    )
 
 
 def better_guess(path: os.PathLike) -> str:
