@@ -3,8 +3,8 @@ from typing import cast
 
 import yaml
 
-from copier.args import *
-from copier.utils import *
+from copicat.args import *
+from copicat.utils import *
 
 _all_ = ["main"]
 

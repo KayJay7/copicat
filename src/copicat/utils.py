@@ -7,7 +7,7 @@ from pwd import getpwnam
 from typing import NamedTuple
 import mimetypes
 
-from copier.args import args
+from copicat.args import args
 
 __all__ = [
     "ensure_uid",

@@ -33,9 +33,9 @@ class TypeArgs(NamedTuple):
 
 type Args = InArgs | OutArgs | TypeArgs
 
-_parser = argparse.ArgumentParser("copier")
+_parser = argparse.ArgumentParser("copicat")
 _subparsers = _parser.add_subparsers(
-    title="subcommands", dest="sub", required=True, help="Copier subcommands"
+    title="subcommands", dest="sub", required=True, help="copicat subcommands"
 )
 
 _parser_out = _subparsers.add_parser(
@@ -51,16 +51,16 @@ _parser_type = _subparsers.add_parser(
 _parser_out.add_argument(
     "config",
     nargs="?",
-    help='Path to YAML config file. Default is "copier.yml"',
-    default="copier.yml",
+    help='Path to YAML config file. Default is "copicat.yml"',
+    default="copicat.yml",
     type=Path,
 )
 
 _parser_in.add_argument(
     "config",
     nargs="?",
-    help='Path to YAML config file. Default is "copier.yml"',
-    default="copier.yml",
+    help='Path to YAML config file. Default is "copicat.yml"',
+    default="copicat.yml",
     type=Path,
 )
 
