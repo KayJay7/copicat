@@ -51,7 +51,7 @@ _parser_type = _subparsers.add_parser(
 _parser_out.add_argument(
     "config",
     nargs="?",
-    help="Path to YAML config file",
+    help='Path to YAML config file. Default is "copier.yml"',
     default="copier.yml",
     type=Path,
 )
@@ -59,7 +59,7 @@ _parser_out.add_argument(
 _parser_in.add_argument(
     "config",
     nargs="?",
-    help="Path to YAML config file",
+    help='Path to YAML config file. Default is "copier.yml"',
     default="copier.yml",
     type=Path,
 )
@@ -82,7 +82,7 @@ _parser_in.add_argument(
     "mode",
     nargs="?",
     type=int,
-    help="Mode of the crated files in octal format",
+    help="Mode of the crated files in the same format as the config file",
     default="660",
 )
 
@@ -93,7 +93,7 @@ _parser_type.add_argument("dest", help="Destination directory", type=Path)
 _parser_type.add_argument(
     "mime",
     nargs="?",
-    help='Half or full of mime type to copy (i.e.: both "video" and "video/x-matroska" will match "video/x-matroska")',
+    help='Half or full of mime type to copy (i.e.: both "video" and "video/x-matroska" will match a file with mimetype "video/x-matroska"). Default is "video"',
     default="video",
 )
 
