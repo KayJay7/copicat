@@ -1,14 +1,14 @@
 ## Copicat
 
-`copier` is a simple automated file copying utility, meant to simplify some common file management needs. The project was born when trying to store dotfiles and system configuration files in a repository, changing ownership and permissions of files as needed. It then expanded to be able to easily move media files between folders.
+`copicat` is a simple automated file copying utility, meant to simplify some common file management needs. The project was born when trying to store dotfiles and system configuration files in a repository, changing ownership and permissions of files as needed. It then expanded to be able to easily move media files between folders.
 
-Common problems solved by `copier`:
+Common problems solved by `copicat`:
 * Copy files from sparse locations to a new location, with configured common permissions
-  * `copier in [-h] [-D] [config] [owner] [group] [mode]`
+  * `copicat in [-h] [-D] [config] [owner] [group] [mode]`
 * Copy those files back to the original location, with per file permissions
-  * `copier out [-h] [-D] [config]`
+  * `copicat out [-h] [-D] [config]`
 * Copy or hardlink all files with a certain mime type from a location to another
-  * `copier type [-h] [-k] [-H] [-T] [-D] source dest [mime]`
+  * `copicat type [-h] [-k] [-H] [-T] [-D] source dest [mime]`
 
 You can use the `--dry-run` option, to test your configuration without overwriting files by accident. You can also use it to decide if the tool works for you!
 
@@ -28,7 +28,7 @@ Neat "quality of life" features:
 
 ### Configuration file
 
-The `copier in` and `copier out` subcommands are meant to operate on the same config file. The config file is a yaml that specifies, user, group and mode for every file to copy, as well as the source and target location of the file.
+The `copicat in` and `copicat out` subcommands are meant to operate on the same config file. The config file is a yaml that specifies, user, group and mode for every file to copy, as well as the source and target location of the file.
 
 The basic structure is:
 ```yaml
@@ -112,15 +112,15 @@ alvise:
 ```
 
 > [!NOTE]
-> `copier` will never create parent directories. If a destination's parent directory is missing, it will print an error.
+> `copicat` will never create parent directories. If a destination's parent directory is missing, it will print an error.
 
 ### Copy `in` mode
 
 ```
-usage: copier in [-h] [-D] [config] [owner] [group] [mode]
+usage: copicat in [-h] [-D] [config] [owner] [group] [mode]
 
 positional arguments:
-  config         Path to YAML config file. Default is "copier.yml"
+  config         Path to YAML config file. Default is "copicat.yml"
   owner          Username or UID of the owner of the files
   group          Group name or GID of the group of the files
   mode           Mode of the crated files in the same format as the config file
@@ -137,10 +137,10 @@ This will copy all files from their source location to the target location, usin
 ### Copy `out` mode
 
 ```
-usage: copier out [-h] [-D] [config]
+usage: copicat out [-h] [-D] [config]
 
 positional arguments:
-  config         Path to YAML config file. Default is "copier.yml"
+  config         Path to YAML config file. Default is "copicat.yml"
 
 options:
   -h, --help     show this help message and exit
@@ -155,7 +155,7 @@ Remember that you might need root access to change ownership and permissions of 
 ### Copy `type` mode
 
 ```
-usage: copier type [-h] [-k] [-H] [-T] [-D] source dest [mime]
+usage: copicat type [-h] [-k] [-H] [-T] [-D] source dest [mime]
 
 positional arguments:
   source                Source directory or file
