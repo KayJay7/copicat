@@ -26,7 +26,8 @@ class TypeArgs(NamedTuple):
     dest: Path
     keep_structure: bool
     hard_link: bool
-    mime: str
+    mimes: list[str]
+    extensions: list[str]
     dry_types: bool
     dry_run: bool
 
@@ -45,7 +46,8 @@ _parser_in = _subparsers.add_parser(
     "in", help="Copy files from target to source location"
 )
 _parser_type = _subparsers.add_parser(
-    "type", help="Copy files from source to destination location based on mime type"
+    "type",
+    help="Copy files from source to destination location based on mime type or extension",
 )
 
 _parser_out.add_argument(
@@ -91,10 +93,21 @@ _parser_type.add_argument("source", help="Source directory or file", type=Path)
 _parser_type.add_argument("dest", help="Destination directory", type=Path)
 
 _parser_type.add_argument(
-    "mime",
-    nargs="?",
-    help='Half or full of mime type to copy (i.e.: both "video" and "video/x-matroska" will match a file with mimetype "video/x-matroska"). Default is "video"',
-    default="video",
+    "-m",
+    "--mimes",
+    metavar="MIME",
+    nargs="*",
+    help='Half or full of mime types to copy (i.e.: both "video" and "video/x-matroska" will match a file with mimetype "video/x-matroska")',
+    default=[],
+)
+
+_parser_type.add_argument(
+    "-e",
+    "--extensions",
+    metavar="EXTENSION",
+    nargs="*",
+    help='Extensions with point of the files to copy (i.e.: ".srt" will match "subs.srt")',
+    default=[],
 )
 
 _parser_type.add_argument(
