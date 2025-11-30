@@ -153,8 +153,6 @@ def copy_or_link_file(
                 print(f'copy: "{src}"->"{dst}"')
                 if not args.dry_run:
                     shutil.copy(src, dst)
-    except AttributeError:
-        pass
     except Exception as ex:
         print(ex)
 
